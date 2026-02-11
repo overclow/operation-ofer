@@ -1,0 +1,128 @@
+<div class="container">
+  <header>
+    <h1>🎯 Dual Canvas - Axis-Based Positioning</h1>
+    <p class="subtitle">Add items and drag them on the chart to position. Total items: <strong>{{ getTotalItems() }}</strong></p>
+  </header>
+
+  <div class="instructions">
+    <h4>🎯 How to Use:</h4>
+    <ul>
+      <li><span class="label">Click "Add Item"</span> button to add items to each chart</li>
+      <li><span class="label">Drag from Items List</span> to reposition on the same chart</li>
+      <li><span class="label">Position Shows:</span> X start/end (with size), Y position</li>
+      <li><span class="label">Size Fixed:</span> Each item has fixed size on X-axis</li>
+      <li><span class="label">Independent:</span> Canvas A and Canvas B work separately</li>
+    </ul>
+  </div>
+
+  <div class="layout">
+    <!-- AVAILABLE ITEMS PANEL -->
+    <div class="section sidebar">
+      <h2>📦 Available Items</h2>
+      <p class="hint">Click to add to each canvas</p>
+      <div class="items-panel">
+        <div *ngFor="let item of availableItems" class="item-template">
+          <div class="item-template-info">
+            <strong>{{ item.name }}</strong>
+            <div class="item-size">Size: {{ item.size.toFixed(1) }}</div>
+          </div>
+          <div class="item-buttons">
+            <button class="btn-add-a" (click)="addItemToChart1(item)" title="Add to Canvas A">A</button>
+            <button class="btn-add-b" (click)="addItemToChart2(item)" title="Add to Canvas B">B</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="axis-info">
+        <h4>📐 Axis Configuration</h4>
+        <div class="axis-detail">
+          <div class="axis-item">
+            <strong>X-Axis:</strong><br>
+            {{ CONFIG.xMin }} - {{ CONFIG.xMax }}
+          </div>
+          <div class="axis-item">
+            <strong>Y-Axis:</strong><br>
+            {{ CONFIG.yMin }} - {{ CONFIG.yMax }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DUAL CHART AREA -->
+    <div class="main-area">
+      <div class="charts-grid">
+        <!-- CANVAS A -->
+        <div class="chart-section">
+          <div class="chart-wrapper">
+            <h2>📍 Canvas A (Blue)</h2>
+            <div
+              class="chart-container"
+              (dragover)="onDragOverChart1($event)"
+              (drop)="onDropChart1($event)"
+            >
+              <echarts [options]="chartOptions1" style="width: 100%; height: 100%"></echarts>
+            </div>
+          </div>
+
+          <!-- PLACED ITEMS - CANVAS A -->
+          <div class="placed-items">
+            <h4>✅ Placed Items ({{ placedItems1.length }})</h4>
+            <div class="items-list" *ngIf="placedItems1.length > 0; else noItemsA">
+              <div class="item-row" 
+                   *ngFor="let item of placedItems1" 
+                   draggable="true"
+                   (dragstart)="onDragStartItem1($event, item)"
+                   title="Drag to reposition on chart">
+                <div class="item-drag-indicator">⋮⋮</div>
+                <div class="item-info">
+                  <div class="item-name">{{ item.name }}</div>
+                  <div class="item-coords">{{ getItemCoordinates(item) }}</div>
+                </div>
+                <button class="item-remove" (click)="removeItem1(item.id)">Remove</button>
+              </div>
+            </div>
+            <ng-template #noItemsA>
+              <p style="color: #94a3b8; font-size: 0.9em;">Click "Add Item" button to place items on this chart.</p>
+            </ng-template>
+          </div>
+        </div>
+
+        <!-- CANVAS B -->
+        <div class="chart-section">
+          <div class="chart-wrapper">
+            <h2>📍 Canvas B (Purple)</h2>
+            <div
+              class="chart-container"
+              (dragover)="onDragOverChart2($event)"
+              (drop)="onDropChart2($event)"
+            >
+              <echarts [options]="chartOptions2" style="width: 100%; height: 100%"></echarts>
+            </div>
+          </div>
+
+          <!-- PLACED ITEMS - CANVAS B -->
+          <div class="placed-items">
+            <h4>✅ Placed Items ({{ placedItems2.length }})</h4>
+            <div class="items-list" *ngIf="placedItems2.length > 0; else noItemsB">
+              <div class="item-row" 
+                   *ngFor="let item of placedItems2" 
+                   draggable="true"
+                   (dragstart)="onDragStartItem2($event, item)"
+                   title="Drag to reposition on chart">
+                <div class="item-drag-indicator">⋮⋮</div>
+                <div class="item-info">
+                  <div class="item-name">{{ item.name }}</div>
+                  <div class="item-coords">{{ getItemCoordinates(item) }}</div>
+                </div>
+                <button class="item-remove" (click)="removeItem2(item.id)">Remove</button>
+              </div>
+            </div>
+            <ng-template #noItemsB>
+              <p style="color: #94a3b8; font-size: 0.9em;">Click "Add Item" button to place items on this chart.</p>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

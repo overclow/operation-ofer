@@ -1,0 +1,274 @@
+.container {
+  max-width: 1800px;
+  margin: 0 auto;
+  padding: 30px 20px;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #475569;
+  color: #e2e8f0;
+
+  h1 {
+    font-size: 2em;
+    color: #60a5fa;
+    margin-bottom: 10px;
+  }
+
+  .subtitle {
+    color: #94a3b8;
+  }
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.section {
+  background: #1e293b;
+  border-radius: 12px;
+  padding: 20px;
+  border: 2px solid #334155;
+
+  h2 {
+    color: #60a5fa;
+    margin-bottom: 15px;
+    font-size: 1.2em;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #334155;
+  }
+}
+
+.table-container {
+  overflow-y: auto;
+  max-height: 600px;
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9em;
+    color: #e2e8f0;
+
+    th {
+      background: #334155;
+      color: #60a5fa;
+      padding: 10px;
+      text-align: left;
+      position: sticky;
+      top: 0;
+    }
+
+    td {
+      padding: 10px;
+      border-bottom: 1px solid #334155;
+    }
+
+    tr {
+      cursor: move;
+      transition: background 0.2s ease;
+
+      &:hover {
+        background: #293548;
+      }
+
+      &.dragging {
+        opacity: 0.5;
+        background: #0f172a;
+      }
+    }
+  }
+}
+
+.drag-handle {
+  color: #60a5fa;
+  font-weight: bold;
+  margin-right: 5px;
+}
+
+.info-box {
+  background: #0f172a;
+  border-left: 4px solid #60a5fa;
+  padding: 15px;
+  border-radius: 6px;
+  margin: 15px 0;
+  font-size: 0.9em;
+  color: #e2e8f0;
+
+  strong {
+    color: #60a5fa;
+  }
+}
+
+.axis-info {
+  background: #0f172a;
+  border-left: 4px solid #8b5cf6;
+  padding: 15px;
+  border-radius: 6px;
+  margin-bottom: 15px;
+  font-size: 0.9em;
+  color: #e2e8f0;
+
+  h4 {
+    color: #8b5cf6;
+    margin-bottom: 10px;
+  }
+
+  .axis-detail {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .axis-item {
+    background: #1e293b;
+    padding: 10px;
+    border-radius: 4px;
+    border-left: 3px solid #8b5cf6;
+
+    strong {
+      color: #8b5cf6;
+    }
+  }
+}
+
+.instructions {
+  background: #0f172a;
+  border-left: 4px solid #f59e0b;
+  padding: 15px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  color: #e2e8f0;
+
+  h4 {
+    color: #fbbf24;
+    margin-bottom: 10px;
+  }
+
+  li {
+    margin-left: 20px;
+    margin-bottom: 8px;
+    font-size: 0.95em;
+  }
+}
+
+.label {
+  display: inline-block;
+  background: #334155;
+  color: #e2e8f0;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8em;
+  margin-right: 5px;
+  margin-bottom: 5px;
+}
+
+.main-area {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.chart-wrapper {
+  background: #1e293b;
+  border-radius: 12px;
+  padding: 20px;
+  border: 2px solid #334155;
+
+  h2 {
+    color: #60a5fa;
+    margin-bottom: 15px;
+    font-size: 1.2em;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #334155;
+  }
+}
+
+.chart-container {
+  position: relative;
+  height: 500px;
+  border: 2px solid #334155;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #0f172a;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: #60a5fa;
+    background: rgba(96, 165, 250, 0.05);
+  }
+
+  echarts {
+    display: block;
+  }
+}
+
+.placed-items {
+  background: #0f172a;
+  border-left: 4px solid #10b981;
+  padding: 15px;
+  border-radius: 6px;
+  color: #e2e8f0;
+
+  h4 {
+    color: #10b981;
+    margin-bottom: 10px;
+  }
+
+  .items-list {
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
+  .item-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px;
+    background: #1e293b;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    align-items: center;
+  }
+
+  .item-info {
+    flex: 1;
+  }
+
+  .item-name {
+    color: #e2e8f0;
+    font-weight: bold;
+  }
+
+  .item-coords {
+    font-size: 0.85em;
+    color: #94a3b8;
+    margin-top: 4px;
+    font-family: monospace;
+  }
+
+  .item-remove {
+    background: #dc2626;
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8em;
+    margin-left: 10px;
+
+    &:hover {
+      background: #b91c1c;
+    }
+  }
+}
+
+@media (max-width: 1200px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}

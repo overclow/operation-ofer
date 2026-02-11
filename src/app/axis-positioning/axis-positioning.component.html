@@ -1,0 +1,92 @@
+<div class="container">
+  <header>
+    <h1>🎯 Angular ECharts - Axis Position Drag & Drop</h1>
+    <p class="subtitle">Position items at specific coordinates on X/Y axes</p>
+  </header>
+
+  <div class="instructions">
+    <h4>🎯 How to Use:</h4>
+    <ul>
+      <li><span class="label">Drag any row</span> from the data table (left)</li>
+      <li><span class="label">Drag into the chart</span> and position it on the axis</li>
+      <li>Chart shows <span class="label">grid lines</span> for easy positioning</li>
+      <li><span class="label">Position info</span> updates in real-time as you drag</li>
+      <li>Drop to place the item at the exact coordinates shown</li>
+      <li>View all placed items in the "Placed Items" section</li>
+    </ul>
+  </div>
+
+  <div class="layout">
+    <!-- DATA SOURCE TABLE -->
+    <div class="section">
+      <h2>📋 Items to Place</h2>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Drag</th>
+              <th>Name</th>
+              <th>Size</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of dataItems" draggable="true" (dragstart)="onDragStart(item)">
+              <td><span class="drag-handle">⋮⋮</span></td>
+              <td>{{ item.label }}</td>
+              <td>{{ item.value / 20 | number:'1.1-1' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="info-box">
+        <strong>💡 Tip:</strong> Drag from any row to place items on the chart.
+      </div>
+
+      <div class="axis-info">
+        <h4>📐 Current Axis Configuration</h4>
+        <div class="axis-detail">
+          <div class="axis-item">
+            <strong>X-Axis:</strong><br>
+            Range: {{ CONFIG.xMin }} - {{ CONFIG.xMax }}
+          </div>
+          <div class="axis-item">
+            <strong>Y-Axis:</strong><br>
+            Range: {{ CONFIG.yMin }} - {{ CONFIG.yMax }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN CHART AREA -->
+    <div class="main-area">
+      <div class="chart-wrapper">
+        <h2>📍 Positioning Canvas</h2>
+        <div
+          #chartElement
+          class="chart-container"
+          (dragover)="onDragOver($event)"
+          (drop)="onDrop($event)"
+        >
+          <echarts [options]="chartOptions" style="width: 100%; height: 100%"></echarts>
+        </div>
+      </div>
+
+      <!-- PLACED ITEMS -->
+      <div class="placed-items">
+        <h4>✅ Placed Items</h4>
+        <div class="items-list" *ngIf="placedItems.length > 0; else noItems">
+          <div class="item-row" *ngFor="let item of placedItems">
+            <div class="item-info">
+              <div class="item-name">{{ item.name }}</div>
+              <div class="item-coords">{{ getItemCoordinates(item) }}</div>
+            </div>
+            <button class="item-remove" (click)="removeItem(item.id)">Remove</button>
+          </div>
+        </div>
+        <ng-template #noItems>
+          <p style="color: #94a3b8; font-size: 0.9em;">No items placed yet. Drag items from the table to place them.</p>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</div>
