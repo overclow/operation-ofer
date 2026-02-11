@@ -49,6 +49,11 @@ header {
     font-size: 1.1em;
   }
 
+  ul li:last-child {
+    color: #a3e635;
+    font-weight: 600;
+  }
+
   ul {
     list-style: none;
     padding: 0;
@@ -280,10 +285,15 @@ header {
   background: rgba(15, 23, 42, 0.5);
   position: relative;
   transition: all 0.3s ease;
+  cursor: grab;
 
   &:hover {
     border-color: rgba(96, 165, 250, 0.5);
     box-shadow: 0 0 15px rgba(96, 165, 250, 0.1);
+  }
+
+  &:active {
+    cursor: grabbing;
   }
 
   &:active {

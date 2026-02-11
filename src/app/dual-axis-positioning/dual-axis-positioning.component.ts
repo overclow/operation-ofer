@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import * as echarts from 'echarts';
 
 interface PlacedItem {
@@ -15,7 +15,7 @@ interface PlacedItem {
   templateUrl: './dual-axis-positioning.component.html',
   styleUrls: ['./dual-axis-positioning.component.scss']
 })
-export class DualAxisPositioningComponent implements OnInit {
+export class DualAxisPositioningComponent implements OnInit, AfterViewInit {
   @ViewChild('chart1') chart1Ref: any;
   @ViewChild('chart2') chart2Ref: any;
 
@@ -32,11 +32,21 @@ export class DualAxisPositioningComponent implements OnInit {
   chartOptions1: any;
   placedItems1: PlacedItem[] = [];
   draggedItem1: PlacedItem | null = null;
+  chart1Instance: any = null;
+  chart1Container: any = null;
   
   // Chart 2 (Canvas B)
   chartOptions2: any;
   placedItems2: PlacedItem[] = [];
   draggedItem2: PlacedItem | null = null;
+  chart2Instance: any = null;
+  chart2Container: any = null;
+  
+  // Chart dragging state
+  chartDraggingItem1: PlacedItem | null = null;
+  chartDraggingItem2: PlacedItem | null = null;
+  isDraggingChart1: boolean = false;
+  isDraggingChart2: boolean = false;
 
   // Sample items to add to charts
   availableItems = [
@@ -53,6 +63,13 @@ export class DualAxisPositioningComponent implements OnInit {
   }
 
   ngOnInit(): void {
+  }
+
+  ngAfterViewInit(): void {
+    // Set up chart references and mouse event listeners
+    setTimeout(() => {
+      this.setupChartMouseListeners();
+    }, 500);
   }
 
   initializeCharts(): void {
@@ -276,6 +293,125 @@ export class DualAxisPositioningComponent implements OnInit {
   removeItem2(id: number): void {
     this.placedItems2 = this.placedItems2.filter(item => item.id !== id);
     this.updateChart2();
+  }
+
+  // ============ CHART MOUSE EVENT LISTENERS ============
+  setupChartMouseListeners(): void {
+    // Get chart containers
+    const chart1Container = document.querySelector('[class*="chart-container"]:nth-of-type(1)') as HTMLElement;
+    const chart2Container = document.querySelector('[class*="chart-container"]:nth-of-type(2)') as HTMLElement;
+
+    if (chart1Container) {
+      this.chart1Container = chart1Container;
+      chart1Container.addEventListener('mousedown', (e) => this.onChart1MouseDown(e as MouseEvent));
+      document.addEventListener('mousemove', (e) => this.onChart1MouseMove(e as MouseEvent));
+      document.addEventListener('mouseup', (e) => this.onChart1MouseUp(e as MouseEvent));
+    }
+
+    if (chart2Container) {
+      this.chart2Container = chart2Container;
+      chart2Container.addEventListener('mousedown', (e) => this.onChart2MouseDown(e as MouseEvent));
+      document.addEventListener('mousemove', (e) => this.onChart2MouseMove(e as MouseEvent));
+      document.addEventListener('mouseup', (e) => this.onChart2MouseUp(e as MouseEvent));
+    }
+  }
+
+  // ============ CHART 1 MOUSE DRAGGING ============
+  onChart1MouseDown(event: MouseEvent): void {
+    if (!this.chart1Container) return;
+    
+    const rect = this.chart1Container.getBoundingClientRect();
+    const x = ((event.clientX - rect.left) / rect.width) * (this.CONFIG.xMax - this.CONFIG.xMin);
+    const y = ((rect.height - (event.clientY - rect.top)) / rect.height) * (this.CONFIG.yMax - this.CONFIG.yMin);
+
+    // Find which item is closest to click position
+    let closestItem = null;
+    let closestDistance = 0.5; // threshold
+
+    this.placedItems1.forEach(item => {
+      const distance = Math.sqrt(Math.pow(item.x - x, 2) + Math.pow(item.y - y, 2));
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        closestItem = item;
+      }
+    });
+
+    if (closestItem) {
+      this.isDraggingChart1 = true;
+      this.chartDraggingItem1 = closestItem;
+    }
+  }
+
+  onChart1MouseMove(event: MouseEvent): void {
+    if (!this.isDraggingChart1 || !this.chartDraggingItem1 || !this.chart1Container) return;
+
+    const rect = this.chart1Container.getBoundingClientRect();
+    const x = ((event.clientX - rect.left) / rect.width) * (this.CONFIG.xMax - this.CONFIG.xMin);
+    const y = ((rect.height - (event.clientY - rect.top)) / rect.height) * (this.CONFIG.yMax - this.CONFIG.yMin);
+
+    // Update item position with boundary checking
+    this.chartDraggingItem1.x = Math.max(this.CONFIG.xMin, Math.min(this.CONFIG.xMax - this.chartDraggingItem1.size, parseFloat(x.toFixed(2))));
+    this.chartDraggingItem1.y = Math.max(this.CONFIG.yMin, Math.min(this.CONFIG.yMax, parseFloat(y.toFixed(2))));
+    this.chartDraggingItem1.x2 = this.chartDraggingItem1.x + this.chartDraggingItem1.size;
+
+    this.updateChart1();
+  }
+
+  onChart1MouseUp(event: MouseEvent): void {
+    if (this.isDraggingChart1 && this.chartDraggingItem1) {
+      this.isDraggingChart1 = false;
+      this.chartDraggingItem1 = null;
+      this.updateChart1();
+    }
+  }
+
+  // ============ CHART 2 MOUSE DRAGGING ============
+  onChart2MouseDown(event: MouseEvent): void {
+    if (!this.chart2Container) return;
+    
+    const rect = this.chart2Container.getBoundingClientRect();
+    const x = ((event.clientX - rect.left) / rect.width) * (this.CONFIG.xMax - this.CONFIG.xMin);
+    const y = ((rect.height - (event.clientY - rect.top)) / rect.height) * (this.CONFIG.yMax - this.CONFIG.yMin);
+
+    // Find which item is closest to click position
+    let closestItem = null;
+    let closestDistance = 0.5; // threshold
+
+    this.placedItems2.forEach(item => {
+      const distance = Math.sqrt(Math.pow(item.x - x, 2) + Math.pow(item.y - y, 2));
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        closestItem = item;
+      }
+    });
+
+    if (closestItem) {
+      this.isDraggingChart2 = true;
+      this.chartDraggingItem2 = closestItem;
+    }
+  }
+
+  onChart2MouseMove(event: MouseEvent): void {
+    if (!this.isDraggingChart2 || !this.chartDraggingItem2 || !this.chart2Container) return;
+
+    const rect = this.chart2Container.getBoundingClientRect();
+    const x = ((event.clientX - rect.left) / rect.width) * (this.CONFIG.xMax - this.CONFIG.xMin);
+    const y = ((rect.height - (event.clientY - rect.top)) / rect.height) * (this.CONFIG.yMax - this.CONFIG.yMin);
+
+    // Update item position with boundary checking
+    this.chartDraggingItem2.x = Math.max(this.CONFIG.xMin, Math.min(this.CONFIG.xMax - this.chartDraggingItem2.size, parseFloat(x.toFixed(2))));
+    this.chartDraggingItem2.y = Math.max(this.CONFIG.yMin, Math.min(this.CONFIG.yMax, parseFloat(y.toFixed(2))));
+    this.chartDraggingItem2.x2 = this.chartDraggingItem2.x + this.chartDraggingItem2.size;
+
+    this.updateChart2();
+  }
+
+  onChart2MouseUp(event: MouseEvent): void {
+    if (this.isDraggingChart2 && this.chartDraggingItem2) {
+      this.isDraggingChart2 = false;
+      this.chartDraggingItem2 = null;
+      this.updateChart2();
+    }
   }
 
   // ============ HELPERS ============
