@@ -8,11 +8,11 @@
     <h4>🎯 How to Use:</h4>
     <ul>
       <li><span class="label">Add items</span>: Drag from data table to chart</li>
-      <li><span class="label">Reposition items</span>: Drag from "Placed Items" list to chart</li>
-      <li><span class="label">Grid lines</span> show exact axis positions</li>
-      <li><span class="label">Drop</span> to place item at exact coordinates</li>
-      <li><span class="label">Remove</span> items with the Remove button</li>
-      <li>All items show their coordinates in real-time</li>
+      <li><span class="label">Move items</span>: Click & drag items directly on the chart</li>
+      <li><span class="label">Change X position</span>: Drag left/right on chart</li>
+      <li><span class="label">Change Y position</span>: Drag up/down on chart</li>
+      <li><span class="label">Grid lines</span> show exact axis coordinates</li>
+      <li><span class="label">Remove</span> items with the Remove button below</li>
     </ul>
   </div>
 
@@ -67,19 +67,15 @@
           (dragover)="onDragOver($event)"
           (drop)="onDrop($event)"
         >
-          <echarts [options]="chartOptions" style="width: 100%; height: 100%"></echarts>
+          <echarts [options]="chartOptions" (chartReady)="onChartReady($event)" style="width: 100%; height: 100%"></echarts>
         </div>
       </div>
 
       <!-- PLACED ITEMS -->
       <div class="placed-items">
-        <h4>✅ Placed Items (Drag to Reposition)</h4>
+        <h4>✅ Placed Items</h4>
         <div class="items-list" *ngIf="placedItems.length > 0; else noItems">
-          <div class="item-row draggable-item" *ngFor="let item of placedItems" 
-               draggable="true" 
-               (dragstart)="onDragStartPlacedItem(item)"
-               title="Drag to reposition on chart">
-            <div class="item-drag-indicator">⋮⋮</div>
+          <div class="item-row" *ngFor="let item of placedItems">
             <div class="item-info">
               <div class="item-name">{{ item.name }}</div>
               <div class="item-coords">{{ getItemCoordinates(item) }}</div>
@@ -88,7 +84,7 @@
           </div>
         </div>
         <ng-template #noItems>
-          <p style="color: #94a3b8; font-size: 0.9em;">No items placed yet. Drag items from the table to place them.</p>
+          <p style="color: #94a3b8; font-size: 0.9em;">No items placed yet. Drag items from the table to place them on the chart.</p>
         </ng-template>
       </div>
     </div>

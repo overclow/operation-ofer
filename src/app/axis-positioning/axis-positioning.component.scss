@@ -197,6 +197,7 @@ header {
   overflow: hidden;
   background: #0f172a;
   transition: all 0.3s ease;
+  cursor: pointer;
 
   &:hover {
     border-color: #60a5fa;
@@ -205,6 +206,7 @@ header {
 
   echarts {
     display: block;
+    user-select: none;
   }
 }
 
@@ -234,38 +236,17 @@ header {
     margin-bottom: 8px;
     align-items: center;
     transition: all 0.2s ease;
-    border-left: 3px solid transparent;
+    border-left: 3px solid #10b981;
 
     &:hover {
       background: #334155;
-      border-left-color: #10b981;
-    }
-
-    &.draggable-item {
-      cursor: move;
-
-      &:active {
-        opacity: 0.6;
-        background: #0f172a;
-      }
-    }
-  }
-
-  .item-drag-indicator {
-    color: #64748b;
-    font-weight: bold;
-    margin-right: 10px;
-    cursor: grab;
-    font-size: 1.1em;
-
-    &:active {
-      cursor: grabbing;
     }
   }
 
   .item-info {
     flex: 1;
     min-width: 0;
+    padding-right: 10px;
   }
 
   .item-name {
