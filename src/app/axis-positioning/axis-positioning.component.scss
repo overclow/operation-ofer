@@ -233,10 +233,39 @@ header {
     border-radius: 4px;
     margin-bottom: 8px;
     align-items: center;
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
+
+    &:hover {
+      background: #334155;
+      border-left-color: #10b981;
+    }
+
+    &.draggable-item {
+      cursor: move;
+
+      &:active {
+        opacity: 0.6;
+        background: #0f172a;
+      }
+    }
+  }
+
+  .item-drag-indicator {
+    color: #64748b;
+    font-weight: bold;
+    margin-right: 10px;
+    cursor: grab;
+    font-size: 1.1em;
+
+    &:active {
+      cursor: grabbing;
+    }
   }
 
   .item-info {
     flex: 1;
+    min-width: 0;
   }
 
   .item-name {
@@ -249,6 +278,9 @@ header {
     color: #94a3b8;
     margin-top: 4px;
     font-family: monospace;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .item-remove {
@@ -260,9 +292,15 @@ header {
     cursor: pointer;
     font-size: 0.8em;
     margin-left: 10px;
+    flex-shrink: 0;
+    transition: background 0.2s ease;
 
     &:hover {
       background: #b91c1c;
+    }
+
+    &:active {
+      transform: scale(0.95);
     }
   }
 }

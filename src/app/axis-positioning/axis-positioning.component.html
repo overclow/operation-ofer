@@ -7,12 +7,12 @@
   <div class="instructions">
     <h4>🎯 How to Use:</h4>
     <ul>
-      <li><span class="label">Drag any row</span> from the data table (left)</li>
-      <li><span class="label">Drag into the chart</span> and position it on the axis</li>
-      <li>Chart shows <span class="label">grid lines</span> for easy positioning</li>
-      <li><span class="label">Position info</span> updates in real-time as you drag</li>
-      <li>Drop to place the item at the exact coordinates shown</li>
-      <li>View all placed items in the "Placed Items" section</li>
+      <li><span class="label">Add items</span>: Drag from data table to chart</li>
+      <li><span class="label">Reposition items</span>: Drag from "Placed Items" list to chart</li>
+      <li><span class="label">Grid lines</span> show exact axis positions</li>
+      <li><span class="label">Drop</span> to place item at exact coordinates</li>
+      <li><span class="label">Remove</span> items with the Remove button</li>
+      <li>All items show their coordinates in real-time</li>
     </ul>
   </div>
 
@@ -73,9 +73,13 @@
 
       <!-- PLACED ITEMS -->
       <div class="placed-items">
-        <h4>✅ Placed Items</h4>
+        <h4>✅ Placed Items (Drag to Reposition)</h4>
         <div class="items-list" *ngIf="placedItems.length > 0; else noItems">
-          <div class="item-row" *ngFor="let item of placedItems">
+          <div class="item-row draggable-item" *ngFor="let item of placedItems" 
+               draggable="true" 
+               (dragstart)="onDragStartPlacedItem(item)"
+               title="Drag to reposition on chart">
+            <div class="item-drag-indicator">⋮⋮</div>
             <div class="item-info">
               <div class="item-name">{{ item.name }}</div>
               <div class="item-coords">{{ getItemCoordinates(item) }}</div>

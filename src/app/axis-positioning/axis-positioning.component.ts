@@ -37,6 +37,7 @@ export class AxisPositioningComponent implements OnInit {
   chartOptions: any;
   placedItems: PlacedItem[] = [];
   draggedData: any = null;
+  draggedItemId: number | null = null;  // Track if dragging from placed items
   currentMousePos = { x: null, y: null };
 
   // Sample data for drag table
@@ -118,6 +119,17 @@ export class AxisPositioningComponent implements OnInit {
       label: item.label,
       size: item.value / 20 // Use value as proxy for size
     };
+    this.draggedItemId = null; // Not dragging a placed item
+  }
+
+  // Drag an already-placed item from the list to reposition it
+  onDragStartPlacedItem(item: PlacedItem): void {
+    this.draggedData = {
+      value: item.size * 20,
+      label: item.name,
+      size: item.size
+    };
+    this.draggedItemId = item.id; // Mark as dragging a placed item
   }
 
   onDragOver(event: any): void {
@@ -130,22 +142,40 @@ export class AxisPositioningComponent implements OnInit {
 
     if (!this.draggedData) return;
 
-    // Simple calculation - in real app use ECharts convertToPixel API
+    // Calculate position based on drop location
     const rect = (event.target as any).getBoundingClientRect();
     const x = ((event.clientX - rect.left) / rect.width) * (this.CONFIG.xMax - this.CONFIG.xMin);
     const y = ((rect.height - (event.clientY - rect.top)) / rect.height) * (this.CONFIG.yMax - this.CONFIG.yMin);
 
-    const placedItem: PlacedItem = {
-      id: Date.now(),
-      name: this.draggedData.label,
-      size: this.draggedData.size,
-      x: Math.max(this.CONFIG.xMin, Math.min(this.CONFIG.xMax, parseFloat(x.toFixed(2)))),
-      y: Math.max(this.CONFIG.yMin, Math.min(this.CONFIG.yMax, parseFloat(y.toFixed(2)))),
-      x2: 0
-    };
+    const newX = Math.max(this.CONFIG.xMin, Math.min(this.CONFIG.xMax, parseFloat(x.toFixed(2))));
+    const newY = Math.max(this.CONFIG.yMin, Math.min(this.CONFIG.yMax, parseFloat(y.toFixed(2))));
 
-    placedItem.x2 = placedItem.x + placedItem.size;
-    this.placedItems.push(placedItem);
+    // Check if we're repositioning an existing item or adding a new one
+    if (this.draggedItemId !== null) {
+      // Repositioning existing item
+      const itemToUpdate = this.placedItems.find(item => item.id === this.draggedItemId);
+      if (itemToUpdate) {
+        itemToUpdate.x = newX;
+        itemToUpdate.y = newY;
+        itemToUpdate.x2 = itemToUpdate.x + itemToUpdate.size;
+      }
+    } else {
+      // Adding new item from table
+      const placedItem: PlacedItem = {
+        id: Date.now(),
+        name: this.draggedData.label,
+        size: this.draggedData.size,
+        x: newX,
+        y: newY,
+        x2: 0
+      };
+
+      placedItem.x2 = placedItem.x + placedItem.size;
+      this.placedItems.push(placedItem);
+    }
+
+    this.draggedItemId = null;
+    this.draggedData = null;
     this.updateChart();
   }
 
